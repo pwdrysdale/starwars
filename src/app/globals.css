@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Star Wars";
+    src: local("Star Wars"),
+    url("../Star Wars.ttf") format("truetype");
+}
+
+h1 {
+    @apply text-4xl;
+}
+
+h4 {
+    @apply text-2xl;
+}
