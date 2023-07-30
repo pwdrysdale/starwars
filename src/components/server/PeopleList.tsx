@@ -1,13 +1,14 @@
-import { FC } from 'react';
-import Link from 'next/link';
+import { FC } from "react"
+import Link from "next/link"
 
-import { Person } from '@/interfaces';
+import { Person } from "@/interfaces"
+import Loader from "./Loader"
 
 interface IPeopleListProps {
-    people: Person[];
-    searching: boolean;
-    hasSearched: boolean;
-    clearSearch: () => void;
+    people: Person[]
+    searching: boolean
+    hasSearched: boolean
+    clearSearch: () => void
 }
 
 const PeopleList: FC<IPeopleListProps> = ({
@@ -17,26 +18,26 @@ const PeopleList: FC<IPeopleListProps> = ({
     clearSearch,
 }) => {
     const getId = (url: string) => {
-        const regex = /\d+/g;
-        return url.match(regex)?.[0];
-    };
+        const regex = /\d+/g
+        return url.match(regex)?.[0]
+    }
 
     if (searching || (hasSearched && !people.length)) {
         return (
-            <div className="mt-4 mx-auto w-full flex justify-center">
+            <div className="flex justify-center w-full mx-auto mt-4">
                 <span className="text-sm text-gray-700 dark:text-gray-500">
-                    {searching ? 'Searching...' : 'No results found found'}
+                    {searching ? <Loader /> : "No results found"}
                 </span>
             </div>
-        );
+        )
     }
 
     return (
-        <div className="mx-auto w-full flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center w-full mx-auto">
             <ul>
                 {people?.map((person, index) => (
                     <Link href={`/profile/${getId(person.url)}`} key={index}>
-                        <li className="cursor-pointer h-full px-4 py-2 my-2 border-2 rounded-lg flex items-center justify-center text-center w-full hover:border-gray-400 dark:hover:border-gray-600 transition-all duration-500 w-72 text-bold">
+                        <li className="flex items-center justify-center w-full h-full px-4 py-2 my-2 text-center transition-all duration-500 border-2 rounded-lg cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 w-72 text-bold">
                             <span>{person.name}</span>
                         </li>
                     </Link>
@@ -45,13 +46,13 @@ const PeopleList: FC<IPeopleListProps> = ({
             {people.length ? (
                 <div
                     onClick={clearSearch}
-                    className="cursor-pointer text-red-500 hover:text-red-700 transition-all duration-500"
+                    className="text-red-500 transition-all duration-500 cursor-pointer hover:text-red-700"
                 >
                     Clear
                 </div>
             ) : null}
         </div>
-    );
-};
+    )
+}
 
-export default PeopleList;
+export default PeopleList

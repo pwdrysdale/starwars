@@ -1,23 +1,21 @@
-import React, { FC, Suspense } from 'react';
+import React, { FC, Suspense } from "react"
 
-import usePersonStore from '@/store/peopleStore';
+import usePersonStore from "@/store/peopleStore"
 import {
-    useSpeciesStore,
     useHomeworldsStore,
-    useStarshipsStore,
     useVehicleStore,
-} from '@/store/additionalResources';
-import ContentBlock from '@/app/profile/[id]/ContentBlock';
-import { PeopleRoutesType } from '@/interfaces';
-import BackButton from '@/components/client/BackButton';
-import SpeciesContent from '@/app/profile/[id]/SpeciesContent';
-import StarshipsContent from '@/app/profile/[id]/StarshipsContent';
-const FilmsContent = React.lazy(
-    () => import('@/app/profile/[id]/FilmsContent'),
-);
+} from "@/store/additionalResources"
+import ContentBlock from "@/app/profile/[id]/ContentBlock"
+import { PeopleRoutesType } from "@/interfaces"
+import BackButton from "@/components/client/BackButton"
+import SpeciesContent from "@/app/profile/[id]/SpeciesContent"
+import StarshipsContent from "@/app/profile/[id]/StarshipsContent"
+import Loader from "@/components/server/Loader"
+import { toUpperCase, toTitleCase } from "@/utils/utils"
+const FilmsContent = React.lazy(() => import("@/app/profile/[id]/FilmsContent"))
 
 interface IdProps {
-    id: string;
+    id: string
 }
 
 const Id: FC<IdProps> = async ({ id }) => {
@@ -25,27 +23,35 @@ const Id: FC<IdProps> = async ({ id }) => {
         ? await usePersonStore
               .getState()
               .get(`https://swapi.dev/api/people/${id}/` as PeopleRoutesType)
-        : undefined;
+        : undefined
     const vehicles = person
         ? await useVehicleStore.getState().getList(person?.vehicles)
-        : [];
+        : []
     const homeworld = person
         ? await useHomeworldsStore.getState().get(person?.homeworld)
-        : undefined;
-
-    console.log('home world', { homeworld, p: person?.homeworld, person });
+        : undefined
 
     return (
         <div className="py-8">
             <h1 className="font-sw">{person?.name}</h1>
-            <div className="grid grid cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                <Suspense fallback={<div>Loading...</div>}>
+            <div className="my-4">
+                <h4>Basic Information</h4>
+                <ul>Gender: {toUpperCase(person.gender)}</ul>
+                <ul>Height: {person.height}</ul>
+                <ul>Weight: {person.mass}</ul>
+                <ul>Hair Color: {toTitleCase(person.hair_color)}</ul>
+                <ul>Skin Color: {toTitleCase(person.skin_color)}</ul>
+                <ul>Eye Color: {toTitleCase(person.eye_color)}</ul>
+                <ul>Birth Year: {person.birth_year}</ul>
+            </div>
+            <div className="grid gap-5 cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <Suspense fallback={<Loader />}>
                     <FilmsContent person={person} />
                 </Suspense>
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<Loader />}>
                     <SpeciesContent person={person} />
                 </Suspense>
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<Loader />}>
                     <StarshipsContent person={person} />
                 </Suspense>
                 <ContentBlock title="Vehicles" content={vehicles} />
@@ -57,7 +63,7 @@ const Id: FC<IdProps> = async ({ id }) => {
                 <BackButton />
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Id;
+export default Id
